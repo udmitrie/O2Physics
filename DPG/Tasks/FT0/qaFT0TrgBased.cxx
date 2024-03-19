@@ -40,8 +40,7 @@ using namespace o2::framework;
 using BCsWithRun3Matchings = soa::Join<aod::BCs, aod::BcSels, aod::Timestamps,
                                        aod::Run3MatchedToBCSparse>;
 
-struct qaFT0TrgBased
-{
+struct qaFT0TrgBased {
 
   // Configurable<bool> isMC{"isMC", 0, "0 - data, 1 - MC"};
   Configurable<int> selection{"selection", 0, "trigger: 0 - no sel, 8 - sel8"};
@@ -50,8 +49,7 @@ struct qaFT0TrgBased
 
   // Event selection conditions
   // Caution required if order is changed.
-  enum eConditions
-  {
+  enum eConditions {
     kAll,
     kHasFT0,
     kOrAFT0,
@@ -66,20 +64,19 @@ struct qaFT0TrgBased
 
   // Event selection condition names
   // Caution required if names are changed. See FillConditionhistos macro below (+ post processing scripts)
-  inline static std::map<eConditions, const char *> mapConditionNames = {
-      {kAll, "All"},
-      {kHasFT0, "HasFT0"},
-      {kOrAFT0, "FT0OrA"},
-      {kOrCFT0, "FT0OrC"},
-      {kOrACFT0, "FT0OrAC"},
-      {k0TVX, "0TVX"},
-      {kCent, "Cent"},
-      {kSemiCent, "SemiCent"},
-      {kMinBias, "MinBias"}};
+  inline static std::map<eConditions, const char*> mapConditionNames = {
+    {kAll, "All"},
+    {kHasFT0, "HasFT0"},
+    {kOrAFT0, "FT0OrA"},
+    {kOrCFT0, "FT0OrC"},
+    {kOrACFT0, "FT0OrAC"},
+    {k0TVX, "0TVX"},
+    {kCent, "Cent"},
+    {kSemiCent, "SemiCent"},
+    {kMinBias, "MinBias"}};
 
   // Observables
-  enum eObservables
-  {
+  enum eObservables {
     kT0A,
     kT0C,
     kT0AC,
@@ -103,41 +100,39 @@ struct qaFT0TrgBased
   };
 
   // Observable names
-  inline static std::map<eObservables, const char *> mapObservableNames = {
-      {kT0A, "hT0A"},
-      {kT0C, "hT0C"},
-      {kT0AC, "hT0AC"},
-      {kT0A_V0A, "hT0A_V0A"},
-      {kT0res, "hT0res"},
-      {kAmpT0A, "hAmpT0A"},
-      {kAmpT0C, "hAmpT0C"},
-      {kMultT0A, "hMultT0A"},
-      {kMultT0C, "hMultT0C"},
-      {kMultT0AC, "hMultT0AC"},
-      {kMultT0A_V0A, "hMultT0A_V0A"},
-      {kMultT0A_ZNA, "hMultT0A_ZNA"},
-      {kMultT0C_ZNC, "hMultT0C_ZNC"},
-      {kMultZNA_ZNC, "hMultZNA_ZNC"},
-      {kT0vertex, "hT0vertex"},
-      {kPV, "hPV"},
-      {kT0V_PV_diff, "hT0V_PV_diff"},
-      {kT0V_PV, "hT0V_PV"},
-      {kContrib, "hContrib"}};
+  inline static std::map<eObservables, const char*> mapObservableNames = {
+    {kT0A, "hT0A"},
+    {kT0C, "hT0C"},
+    {kT0AC, "hT0AC"},
+    {kT0A_V0A, "hT0A_V0A"},
+    {kT0res, "hT0res"},
+    {kAmpT0A, "hAmpT0A"},
+    {kAmpT0C, "hAmpT0C"},
+    {kMultT0A, "hMultT0A"},
+    {kMultT0C, "hMultT0C"},
+    {kMultT0AC, "hMultT0AC"},
+    {kMultT0A_V0A, "hMultT0A_V0A"},
+    {kMultT0A_ZNA, "hMultT0A_ZNA"},
+    {kMultT0C_ZNC, "hMultT0C_ZNC"},
+    {kMultZNA_ZNC, "hMultZNA_ZNC"},
+    {kT0vertex, "hT0vertex"},
+    {kPV, "hPV"},
+    {kT0V_PV_diff, "hT0V_PV_diff"},
+    {kT0V_PV, "hT0V_PV"},
+    {kContrib, "hContrib"}};
 
   HistogramRegistry histos{
-      "Histos",
-      {},
-      OutputObjHandlingPolicy::AnalysisObject};
+    "Histos",
+    {},
+    OutputObjHandlingPolicy::AnalysisObject};
 
-  void init(InitContext &)
+  void init(InitContext&)
   {
 
-    if (kNConditions != mapConditionNames.size())
-    {
+    if (kNConditions != mapConditionNames.size()) {
       LOG(fatal) << "Number of conditions does not match number of condition names";
     }
-    if (kNObservables != mapObservableNames.size())
-    {
+    if (kNObservables != mapObservableNames.size()) {
       LOG(fatal) << "Number of observables does not match number of observable names";
     }
 
@@ -174,10 +169,8 @@ struct qaFT0TrgBased
     // Lambda that creates one histogram for 'observable' per condition, excluding kAll condition
     bool isBCs = 0;
 
-    auto const makeConditionHistos = [&](bool isBCs, eObservables observable, HistType histType, const std::vector<AxisSpec> &axis)
-    {
-      for (int iCondition = 1; iCondition < kNConditions; iCondition++)
-      {
+    auto const makeConditionHistos = [&](bool isBCs, eObservables observable, HistType histType, const std::vector<AxisSpec>& axis) {
+      for (int iCondition = 1; iCondition < kNConditions; iCondition++) {
 
         const std::string prefix = isBCs ? "BCs/" : "Colls/";
 
@@ -188,8 +181,7 @@ struct qaFT0TrgBased
     };
 
     // Collisions task
-    if (doprocessCollisions)
-    {
+    if (doprocessCollisions) {
 
       isBCs = 0;
 
@@ -226,8 +218,7 @@ struct qaFT0TrgBased
       // Histogram for storing event selection statistics
       auto hc = histos.add<TH1>("Colls/EventSelectionStats", "Event selection statistics", kTH1F, {axisEvSelStats});
 
-      for (int iCondition = 0; iCondition < kNConditions; iCondition++)
-      {
+      for (int iCondition = 0; iCondition < kNConditions; iCondition++) {
         hc->GetXaxis()->SetBinLabel(iCondition + 1, mapConditionNames[static_cast<eConditions>(iCondition)]);
       }
     }
@@ -235,8 +226,7 @@ struct qaFT0TrgBased
     //_______________________________________________________________________________________________________________________
     // BC task
 
-    if (doprocessBCs)
-    {
+    if (doprocessBCs) {
       isBCs = 1;
 
       makeConditionHistos(isBCs, kT0A, kTH1F, {axisTime});
@@ -262,21 +252,19 @@ struct qaFT0TrgBased
       // Histogram for storing event selection statistics
       auto hbc = histos.add<TH1>("BCs/EventSelectionStats", "Event selection statistics", kTH1F, {axisEvSelStats});
 
-      for (int iCondition = 0; iCondition < kNConditions; iCondition++)
-      {
+      for (int iCondition = 0; iCondition < kNConditions; iCondition++) {
         hbc->GetXaxis()->SetBinLabel(iCondition + 1, mapConditionNames[static_cast<eConditions>(iCondition)]);
       }
     }
   }
 
   void
-  processCollisions(soa::Join<aod::Collisions, aod::EvSels, aod::Mults,
-                              aod::FT0sCorrected>::iterator const &collision,
-                    aod::FT0s const &ft0s, aod::FV0As const &fv0s, aod::Zdcs const &zdcs)
+    processCollisions(soa::Join<aod::Collisions, aod::EvSels, aod::Mults,
+                                aod::FT0sCorrected>::iterator const& collision,
+                      aod::FT0s const& ft0s, aod::FV0As const& fv0s, aod::Zdcs const& zdcs)
   {
 
-    if (selection == 8 && !collision.sel8())
-    {
+    if (selection == 8 && !collision.sel8()) {
       return;
     }
 
@@ -300,8 +288,7 @@ struct qaFT0TrgBased
     float multFV0 = 0.f;
 
     // is FT0
-    if (hasFT0)
-    {
+    if (hasFT0) {
 
       histos.fill(HIST("Colls/EventSelectionStats"), kHasFT0);
 
@@ -316,81 +303,63 @@ struct qaFT0TrgBased
       SemiCent = triggers[o2::ft0::Triggers::bitSCen];
       MinBias = (TVX && (Cent || SemiCent));
 
-      if (OrAFT0)
-      {
+      if (OrAFT0) {
         histos.fill(HIST("Colls/EventSelectionStats"), kOrAFT0);
       }
-      if (OrCFT0)
-      {
+      if (OrCFT0) {
         histos.fill(HIST("Colls/EventSelectionStats"), kOrCFT0);
       }
-      if (OrACFT0)
-      {
+      if (OrACFT0) {
         histos.fill(HIST("Colls/EventSelectionStats"), kOrACFT0);
       }
-      if (TVX)
-      {
+      if (TVX) {
         histos.fill(HIST("Colls/EventSelectionStats"), k0TVX);
       }
-      if (Cent)
-      {
+      if (Cent) {
         histos.fill(HIST("Colls/EventSelectionStats"), kCent);
       }
-      if (SemiCent)
-      {
+      if (SemiCent) {
         histos.fill(HIST("Colls/EventSelectionStats"), kSemiCent);
       }
-      if (MinBias)
-      {
+      if (MinBias) {
         histos.fill(HIST("Colls/EventSelectionStats"), kMinBias);
       }
 
       // Macro for filling histograms for 'observable' based on conditions for CollisionsTask
 #define FillConditionHistos(observable, ...)                           \
-  if (hasFT0)                                                          \
-  {                                                                    \
+  if (hasFT0) {                                                        \
     histos.fill(HIST("Colls/" observable "/HasFT0"), __VA_ARGS__);     \
-    if (OrAFT0)                                                        \
-    {                                                                  \
+    if (OrAFT0) {                                                      \
       histos.fill(HIST("Colls/" observable "/FT0OrA"), __VA_ARGS__);   \
     }                                                                  \
-    if (OrCFT0)                                                        \
-    {                                                                  \
+    if (OrCFT0) {                                                      \
       histos.fill(HIST("Colls/" observable "/FT0OrC"), __VA_ARGS__);   \
     }                                                                  \
-    if (OrACFT0)                                                       \
-    {                                                                  \
+    if (OrACFT0) {                                                     \
       histos.fill(HIST("Colls/" observable "/FT0OrAC"), __VA_ARGS__);  \
     }                                                                  \
-    if (TVX)                                                           \
-    {                                                                  \
+    if (TVX) {                                                         \
       histos.fill(HIST("Colls/" observable "/0TVX"), __VA_ARGS__);     \
     }                                                                  \
-    if (Cent)                                                          \
-    {                                                                  \
+    if (Cent) {                                                        \
       histos.fill(HIST("Colls/" observable "/Cent"), __VA_ARGS__);     \
     }                                                                  \
-    if (SemiCent)                                                      \
-    {                                                                  \
+    if (SemiCent) {                                                    \
       histos.fill(HIST("Colls/" observable "/SemiCent"), __VA_ARGS__); \
     }                                                                  \
-    if (MinBias)                                                       \
-    {                                                                  \
+    if (MinBias) {                                                     \
       histos.fill(HIST("Colls/" observable "/MinBias"), __VA_ARGS__);  \
     }                                                                  \
   }
 
-      if (ft0.isValidTimeA())
-      {
+      if (ft0.isValidTimeA()) {
         FillConditionHistos("hT0A", ft0.timeA());
       }
-      if (ft0.isValidTimeC())
-      {
+      if (ft0.isValidTimeC()) {
         FillConditionHistos("hT0C", ft0.timeC());
       }
 
-      if (ft0.isValidTimeA() && ft0.isValidTimeC())
-      {
+      if (ft0.isValidTimeA() && ft0.isValidTimeC()) {
         FillConditionHistos("hT0AC", ft0.collTime());
         FillConditionHistos("hT0vertex", ft0.posZ());
         FillConditionHistos("hT0V_PV", ft0.posZ(), collision.posZ());
@@ -398,21 +367,18 @@ struct qaFT0TrgBased
         FillConditionHistos("hPV", ft0.posZ());
       }
 
-      if (collision.t0CCorrectedValid() && collision.t0ACorrectedValid())
-      {
+      if (collision.t0CCorrectedValid() && collision.t0ACorrectedValid()) {
         FillConditionHistos("hT0res", collision.t0resolution());
       }
 
-      for (std::size_t i_a = 0; i_a < ft0.amplitudeA().size(); i_a++)
-      {
+      for (std::size_t i_a = 0; i_a < ft0.amplitudeA().size(); i_a++) {
 
         float amplitudeA = ft0.amplitudeA()[i_a];
         //   uint8_t channel = ft0.channelA()[i_a];
         FillConditionHistos("hAmpT0A", amplitudeA);
       }
 
-      for (std::size_t i_c = 0; i_c < ft0.amplitudeC().size(); i_c++)
-      {
+      for (std::size_t i_c = 0; i_c < ft0.amplitudeC().size(); i_c++) {
         float amplitudeC = ft0.amplitudeC()[i_c];
         //  uint8_t channel = ft0.channelC()[i_c];
         FillConditionHistos("hAmpT0C", amplitudeC);
@@ -432,8 +398,7 @@ struct qaFT0TrgBased
       float multZNC = 0;
 
       // is ZDC
-      if (hasZDC)
-      {
+      if (hasZDC) {
 
         multZNA = collision.multZNA();
         multZNC = collision.multZNC();
@@ -443,8 +408,7 @@ struct qaFT0TrgBased
       } // end of if (collision.foundZDCId() >= 0)
 
       // is FV0
-      if (hasFV0)
-      {
+      if (hasFV0) {
         auto fv0 = collision.foundFV0();
 
         FillConditionHistos("hT0A_V0A", fv0.time(), ft0.timeA());
@@ -469,8 +433,8 @@ struct qaFT0TrgBased
 
   PROCESS_SWITCH(qaFT0TrgBased, processCollisions, "per-collision analysis", true);
 
-  void processBCs(BCsWithRun3Matchings::iterator const &bc, aod::FV0As const &,
-                  aod::FT0s const &, aod::Zdcs const &zdcs)
+  void processBCs(BCsWithRun3Matchings::iterator const& bc, aod::FV0As const&,
+                  aod::FT0s const&, aod::Zdcs const& zdcs)
   {
 
     histos.fill(HIST("BCs/EventSelectionStats"), kAll);
@@ -494,8 +458,7 @@ struct qaFT0TrgBased
     const bool hasFV0 = bc.has_fv0a();
 
     // isFT0
-    if (hasFT0)
-    {
+    if (hasFT0) {
 
       auto ft0 = bc.ft0();
 
@@ -510,95 +473,75 @@ struct qaFT0TrgBased
       SemiCent = triggers[o2::ft0::Triggers::bitSCen];
       MinBias = (TVX && (Cent || SemiCent));
 
-      if (OrAFT0)
-      {
+      if (OrAFT0) {
         histos.fill(HIST("BCs/EventSelectionStats"), kOrAFT0);
       }
-      if (OrCFT0)
-      {
+      if (OrCFT0) {
         histos.fill(HIST("BCs/EventSelectionStats"), kOrCFT0);
       }
-      if (OrACFT0)
-      {
+      if (OrACFT0) {
         histos.fill(HIST("BCs/EventSelectionStats"), kOrACFT0);
       }
-      if (TVX)
-      {
+      if (TVX) {
         histos.fill(HIST("BCs/EventSelectionStats"), k0TVX);
       }
-      if (Cent)
-      {
+      if (Cent) {
         histos.fill(HIST("BCs/EventSelectionStats"), kCent);
       }
-      if (SemiCent)
-      {
+      if (SemiCent) {
         histos.fill(HIST("BCs/EventSelectionStats"), kSemiCent);
       }
-      if (MinBias)
-      {
+      if (MinBias) {
         histos.fill(HIST("BCs/EventSelectionStats"), kMinBias);
       }
 
       // Macro for filling histograms for 'observable' based on conditions for BCsTask
 #define FillConditionHistosBCs(observable, ...)                      \
-  if (hasFT0)                                                        \
-  {                                                                  \
+  if (hasFT0) {                                                      \
     histos.fill(HIST("BCs/" observable "/HasFT0"), __VA_ARGS__);     \
-    if (OrAFT0)                                                      \
-    {                                                                \
+    if (OrAFT0) {                                                    \
       histos.fill(HIST("BCs/" observable "/FT0OrA"), __VA_ARGS__);   \
     }                                                                \
-    if (OrCFT0)                                                      \
-    {                                                                \
+    if (OrCFT0) {                                                    \
       histos.fill(HIST("BCs/" observable "/FT0OrC"), __VA_ARGS__);   \
     }                                                                \
-    if (OrACFT0)                                                     \
-    {                                                                \
+    if (OrACFT0) {                                                   \
       histos.fill(HIST("BCs/" observable "/FT0OrAC"), __VA_ARGS__);  \
     }                                                                \
-    if (TVX)                                                         \
-    {                                                                \
+    if (TVX) {                                                       \
       histos.fill(HIST("BCs/" observable "/0TVX"), __VA_ARGS__);     \
     }                                                                \
-    if (Cent)                                                        \
-    {                                                                \
+    if (Cent) {                                                      \
       histos.fill(HIST("BCs/" observable "/Cent"), __VA_ARGS__);     \
     }                                                                \
-    if (SemiCent)                                                    \
-    {                                                                \
+    if (SemiCent) {                                                  \
       histos.fill(HIST("BCs/" observable "/SemiCent"), __VA_ARGS__); \
     }                                                                \
-    if (MinBias)                                                     \
-    {                                                                \
+    if (MinBias) {                                                   \
       histos.fill(HIST("BCs/" observable "/MinBias"), __VA_ARGS__);  \
     }                                                                \
   }
 
-      if (ft0.isValidTimeA())
-      {
+      if (ft0.isValidTimeA()) {
         FillConditionHistosBCs("hT0A", ft0.timeA());
       }
-      if (ft0.isValidTimeC())
-      {
+      if (ft0.isValidTimeC()) {
         FillConditionHistosBCs("hT0C", ft0.timeC());
       }
 
-      if (ft0.isValidTimeA() && ft0.isValidTimeC())
-      {
+      if (ft0.isValidTimeA() && ft0.isValidTimeC()) {
         FillConditionHistosBCs("hT0AC", ft0.collTime());
         FillConditionHistosBCs("hT0vertex", ft0.posZ());
       }
 
-      for (std::size_t i_a = 0; i_a < ft0.amplitudeA().size(); i_a++)
-      {
+      for (std::size_t i_a = 0; i_a < ft0.amplitudeA().size(); i_a++) {
 
         float amplitudeA = ft0.amplitudeA()[i_a];
         //   uint8_t channel = ft0.channelA()[i_a];
         FillConditionHistosBCs("hAmpT0A", amplitudeA);
       }
 
-      for (std::size_t i_c = 0; i_c < ft0.amplitudeC().size(); i_c++)
-      {
+      for (std::size_t i_c = 0; i_c < ft0.amplitudeC().size(); i_c++) {
         float amplitudeC = ft0.amplitudeC()[i_c];
         //  uint8_t channel = ft0.channelC()[i_c];
         FillConditionHistosBCs("hAmpT0C", amplitudeC);
@@ -608,22 +551,18 @@ struct qaFT0TrgBased
       multFT0C = ft0.sumAmpC();
       multFT0M = multFT0A + multFT0C;
 
-      if (multFT0A > 0)
-      {
+      if (multFT0A > 0) {
         FillConditionHistosBCs("hMultT0A", multFT0A);
       }
-      if (multFT0C > 0)
-      {
+      if (multFT0C > 0) {
         FillConditionHistosBCs("hMultT0C", multFT0C);
       }
-      if (multFT0M > 0)
-      {
+      if (multFT0M > 0) {
         FillConditionHistosBCs("hMultT0AC", multFT0M);
       }
 
       // Multiplicity correlations with ZDC
-      if (hasZDC)
-      {
+      if (hasZDC) {
         multZNA = bc.zdc().energyCommonZNA();
         multZNC = bc.zdc().energyCommonZNC();
 
@@ -633,8 +572,7 @@ struct qaFT0TrgBased
       } // end if(hasZDC)
 
       // is FV0
-      if (hasFV0)
-      {
+      if (hasFV0) {
         auto fv0 = bc.fv0a();
 
         FillConditionHistosBCs("hT0A_V0A", fv0.time(), ft0.timeA());
@@ -648,8 +586,7 @@ struct qaFT0TrgBased
     bool isZEM1 = false;
     bool isZEM2 = false;
 
-    if (hasZDC)
-    {
+    if (hasZDC) {
 
       isZEM1 = bc.zdc().timeZEM1() > -std::numeric_limits<float>::infinity();
       isZEM2 = bc.zdc().timeZEM2() > -std::numeric_limits<float>::infinity();
@@ -659,8 +596,7 @@ struct qaFT0TrgBased
 
       histos.fill(HIST("BCs/hMultZNA_ZNC/All"), multZNA, multZNC);
 
-      if (!isZEM1 && !isZEM2)
-      {
+      if (!isZEM1 && !isZEM2) {
 
         histos.fill(HIST("BCs/hMultZNA_ZNC_EM/All"), multZNA, multZNC);
       }
@@ -671,7 +607,7 @@ struct qaFT0TrgBased
   PROCESS_SWITCH(qaFT0TrgBased, processBCs, "per-BC analysis", true);
 }; // end of struct
 
-WorkflowSpec defineDataProcessing(ConfigContext const &cfgc)
+WorkflowSpec defineDataProcessing(ConfigContext const& cfgc)
 {
   return WorkflowSpec{adaptAnalysisTask<qaFT0TrgBased>(cfgc, TaskName{"ft0-qa-trg-based"})};
 }
