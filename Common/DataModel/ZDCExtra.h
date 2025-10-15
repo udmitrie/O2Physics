@@ -24,20 +24,20 @@ namespace o2::aod
 {
 namespace zdcextra
 {
-DECLARE_SOA_COLUMN(ZNApmc, znaPMC, float);                 //! PMC ZNA        
-DECLARE_SOA_COLUMN(ZNApm1, znaPM1, float);                 //! PM1 ZNA        
-DECLARE_SOA_COLUMN(ZNApm2, znaPM2, float);                 //! PM2 ZNA        
-DECLARE_SOA_COLUMN(ZNApm3, znaPM3, float);                 //! PM3 ZNA        
-DECLARE_SOA_COLUMN(ZNApm4, znaPM4, float);                 //! PM4 ZNA        
-DECLARE_SOA_COLUMN(ZNAtdc, znaTDC, float);                 //! TDC ZNA        
+DECLARE_SOA_COLUMN(ZNApmc, znaPMC, float);                 //! PMC ZNA
+DECLARE_SOA_COLUMN(ZNApm1, znaPM1, float);                 //! PM1 ZNA
+DECLARE_SOA_COLUMN(ZNApm2, znaPM2, float);                 //! PM2 ZNA
+DECLARE_SOA_COLUMN(ZNApm3, znaPM3, float);                 //! PM3 ZNA
+DECLARE_SOA_COLUMN(ZNApm4, znaPM4, float);                 //! PM4 ZNA
+DECLARE_SOA_COLUMN(ZNAtdc, znaTDC, float);                 //! TDC ZNA
 DECLARE_SOA_COLUMN(ZNAQx, znaQx, float);                   //! Q-vector X ZNA
 DECLARE_SOA_COLUMN(ZNAQy, znaQy, float);                   //! Q-vector Y ZNA
-DECLARE_SOA_COLUMN(ZNCpmc, zncPMC, float);                 //! PMC ZNC        
-DECLARE_SOA_COLUMN(ZNCpm1, zncPM1, float);                 //! PM1 ZNC        
-DECLARE_SOA_COLUMN(ZNCpm2, zncPM2, float);                 //! PM2 ZNC        
-DECLARE_SOA_COLUMN(ZNCpm3, zncPM3, float);                 //! PM3 ZNC        
-DECLARE_SOA_COLUMN(ZNCpm4, zncPM4, float);                 //! PM4 ZNC        
-DECLARE_SOA_COLUMN(ZNCtdc, zncTDC, float);                 //! TDC ZNC        
+DECLARE_SOA_COLUMN(ZNCpmc, zncPMC, float);                 //! PMC ZNC
+DECLARE_SOA_COLUMN(ZNCpm1, zncPM1, float);                 //! PM1 ZNC
+DECLARE_SOA_COLUMN(ZNCpm2, zncPM2, float);                 //! PM2 ZNC
+DECLARE_SOA_COLUMN(ZNCpm3, zncPM3, float);                 //! PM3 ZNC
+DECLARE_SOA_COLUMN(ZNCpm4, zncPM4, float);                 //! PM4 ZNC
+DECLARE_SOA_COLUMN(ZNCtdc, zncTDC, float);                 //! TDC ZNC
 DECLARE_SOA_COLUMN(ZNCQx, zncQx, float);                   //! Q-vector X ZNC
 DECLARE_SOA_COLUMN(ZNCQy, zncQy, float);                   //! Q-vector Y ZNC
 DECLARE_SOA_COLUMN(Centrality, centrality, float);         //! Centrality
