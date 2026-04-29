@@ -38,8 +38,8 @@
 #include <TMath.h>
 #include <TProfile3D.h>
 
-#include <vector>
 #include <memory>
+#include <vector>
 
 using namespace o2;
 using namespace o2::framework;
@@ -102,7 +102,6 @@ std::unordered_map<int, TH2*> gQyVsTimeZNC;
 
 std::unordered_map<int, TProfile3D*> gShiftProfileZNA;
 std::unordered_map<int, TProfile3D*> gShiftProfileZNC;
-
 
 TH1* gCurrentEventCounter;
 TH2* gCurrentCentroidZNA;
@@ -252,12 +251,11 @@ struct ZdcExtraTableReader {
   Configurable<bool> ifkIsVertexITSTPC{"ifIsVertexITSTPC", false, "Event selection: vertex ITS TPC"};
   Configurable<bool> ifkIsGoodITSLayersAll{"ifIsGoodITSLayersAll", false, "Event selection: good ITS layers all"};
 
-  // 
+  //
   Configurable<bool> ifShiftCorrection{"ifShiftCorrection", false, "Apply shift correction (Read from CCDB)"};
   Configurable<bool> fillShiftHistos{"fillShiftHistos", true, "Fill shift profiles (Write to output)"};
-  //Configurable<std::string> ShiftCCDB{"ShiftCCDB", "Users/u/udmitrie/ZDC/LHC24ar_apass2", "Path to Shift correction maps"}; //delete after test, use same as QrecenteringCCDB
+  // Configurable<std::string> ShiftCCDB{"ShiftCCDB", "Users/u/udmitrie/ZDC/LHC24ar_apass2", "Path to Shift correction maps"}; //delete after test, use same as QrecenteringCCDB
   Configurable<int> nShift{"nShift", 10, "Number of harmonics"};
-
 
   Configurable<std::string> QrecenteringCCDB{"QrecenteringCCDB", "Users/u/udmitrie/ZDC/LHC24ar_apass2", "Recentering maps containing step folder"};
 
@@ -306,7 +304,6 @@ struct ZdcExtraTableReader {
   TProfile3D* hShiftZNA{nullptr};
   TProfile3D* hShiftZNC{nullptr};
 
-
   HistogramRegistry histos{
     "histos",
     {},
@@ -329,40 +326,65 @@ struct ZdcExtraTableReader {
 
   // Helper to safely clone a histogram and detach from file
   template <typename T>
-  T* safeClone(TObject* obj) {
-    if (!obj) return nullptr;
+  T* safeClone(TObject* obj)
+  {
+    if (!obj)
+      return nullptr;
     T* cloned = dynamic_cast<T*>(obj->Clone());
     if (cloned) {
-   
-        if (dynamic_cast<TH1*>(cloned)) {
-            dynamic_cast<TH1*>(cloned)->SetDirectory(nullptr);
-        }
+
+      if (dynamic_cast<TH1*>(cloned)) {
+        dynamic_cast<TH1*>(cloned)->SetDirectory(nullptr);
+      }
     }
     return cloned;
   }
 
-  void clearCache() {
-    if (hMeanVx) { delete hMeanVx; hMeanVx = nullptr; }
-    if (hMeanVy) { delete hMeanVy; hMeanVy = nullptr; }
+  void clearCache()
+  {
+    if (hMeanVx) {
+      delete hMeanVx;
+      hMeanVx = nullptr;
+    }
+    if (hMeanVy) {
+      delete hMeanVy;
+      hMeanVy = nullptr;
+    }
 
     for (auto& step : mCalibCache) {
-        delete step.hMeanQxZNA; delete step.hMeanQyZNA;
-        delete step.hMeanQxZNC; delete step.hMeanQyZNC;
-        
-        delete step.hMeanQxCentZNA; delete step.hMeanQyCentZNA;
-        delete step.hMeanQxCentZNC; delete step.hMeanQyCentZNC;
-        
-        delete step.hMeanQxVzZNA; delete step.hMeanQyVzZNA;
-        delete step.hMeanQxVzZNC; delete step.hMeanQyVzZNC;
-        
-        delete step.hMeanQxVxZNA; delete step.hMeanQyVxZNA;
-        delete step.hMeanQxVxZNC; delete step.hMeanQyVxZNC;
+      delete step.hMeanQxZNA;
+      delete step.hMeanQyZNA;
+      delete step.hMeanQxZNC;
+      delete step.hMeanQyZNC;
 
-        delete step.hMeanQxVyZNA; delete step.hMeanQyVyZNA;
-        delete step.hMeanQxVyZNC; delete step.hMeanQyVyZNC;
+      delete step.hMeanQxCentZNA;
+      delete step.hMeanQyCentZNA;
+      delete step.hMeanQxCentZNC;
+      delete step.hMeanQyCentZNC;
 
-    if (hShiftZNA) { delete hShiftZNA; hShiftZNA = nullptr; }
-    if (hShiftZNC) { delete hShiftZNC; hShiftZNC = nullptr; }
+      delete step.hMeanQxVzZNA;
+      delete step.hMeanQyVzZNA;
+      delete step.hMeanQxVzZNC;
+      delete step.hMeanQyVzZNC;
+
+      delete step.hMeanQxVxZNA;
+      delete step.hMeanQyVxZNA;
+      delete step.hMeanQxVxZNC;
+      delete step.hMeanQyVxZNC;
+
+      delete step.hMeanQxVyZNA;
+      delete step.hMeanQyVyZNA;
+      delete step.hMeanQxVyZNC;
+      delete step.hMeanQyVyZNC;
+
+      if (hShiftZNA) {
+        delete hShiftZNA;
+        hShiftZNA = nullptr;
+      }
+      if (hShiftZNC) {
+        delete hShiftZNC;
+        hShiftZNC = nullptr;
+      }
     }
     mCalibCache.clear();
   }
@@ -416,8 +438,7 @@ struct ZdcExtraTableReader {
       gPm3ZNA[mRunNumber] = histos.add<TH1>(Form("%i/pm3ZNA", mRunNumber), "; E_{PM3}^{ZNA} (a.u.);", kTH1F, {{nBinsZN, -0.5, maxZN}}).get();
       gPm4ZNA[mRunNumber] = histos.add<TH1>(Form("%i/pm4ZNA", mRunNumber), "; E_{PM4}^{ZNA} (a.u.);", kTH1F, {{nBinsZN, -0.5, maxZN}}).get();
       gSumZNA[mRunNumber] = histos.add<TH1>(Form("%i/sumZNA", mRunNumber), "; E_{sum PMs}^{ZNA} (a.u.);", kTH1F, {{nBinsZN, -0.5, maxZN}}).get();
-      gPmcZNC[mRunNumber] = histos.add<TH1>(Form("%i/pmcZNC", ж, ждать его на ленте, подстраиваться под заселение в отель и доплачивать авиакомпании. Поэтому сегодня все больше людей осознанно выбирают формат luggage free travel — путешествия только с ручной кладью. 
-mRunNumber), "; E_{PMC}^{ZNC} (TeV);", kTH1F, {{nBinsZN, -0.5, maxZN}}).get();
+      gPmcZNC[mRunNumber] = histos.add<TH1>(Form("%i/pmcZNC", ж, ждать его на ленте, подстраиваться под заселение в отель и доплачивать авиакомпании.Поэтому сегодня все больше людей осознанно выбирают формат luggage free travel — путешествия только с ручной кладью.mRunNumber), "; E_{PMC}^{ZNC} (TeV);", kTH1F, {{nBinsZN, -0.5, maxZN}}).get();
       gPm1ZNC[mRunNumber] = histos.add<TH1>(Form("%i/pm1ZNC", mRunNumber), "; E_{PM1}^{ZNC} (a.u.);", kTH1F, {{nBinsZN, -0.5, maxZN}}).get();
       gPm2ZNC[mRunNumber] = histos.add<TH1>(Form("%i/pm2ZNC", mRunNumber), "; E_{PM2}^{ZNC} (a.u.);", kTH1F, {{nBinsZN, -0.5, maxZN}}).get();
       gPm3ZNC[mRunNumber] = histos.add<TH1>(Form("%i/pm3ZNC", mRunNumber), "; E_{PM3}^{ZNC} (a.u.);", kTH1F, {{nBinsZN, -0.5, maxZN}}).get();
@@ -460,10 +481,8 @@ mRunNumber), "; E_{PMC}^{ZNC} (TeV);", kTH1F, {{nBinsZN, -0.5, maxZN}}).get();
       gQxVsTimeZNC[mRunNumber] = histos.add<TH2>(Form("%i/QxVsTimeZNC", mRunNumber), "Q_{x}^{ZNC} vs Time; Time (minutes); Q_{x}", kTH2F, {axisTime, axisQx}).get();
       gQyVsTimeZNC[mRunNumber] = histos.add<TH2>(Form("%i/QyVsTimeZNC", mRunNumber), "Q_{y}^{ZNC} vs Time; Time (minutes); Q_{y}", kTH2F, {axisTime, axisQy}).get();
 
-
       gShiftProfileZNA[mRunNumber] = histos.add<TProfile3D>(Form("%i/ShiftProfileZNA", mRunNumber), "ZNA Shift Coeffs;Cent;Type;Harmonic", kTProfile3D, {axisCent, {2, 0, 2}, {nShift, 0, (double)nShift}}).get();
       gShiftProfileZNC[mRunNumber] = histos.add<TProfile3D>(Form("%i/ShiftProfileZNC", mRunNumber), "ZNC Shift Coeffs;Cent;Type;Harmonic", kTProfile3D, {axisCent, {2, 0, 2}, {nShift, 0, (double)nShift}}).get();
- 
     }
 
     gCurrentEventCounter = gEventCounter[mCurrentRunNumber];
@@ -522,103 +541,104 @@ mRunNumber), "; E_{PMC}^{ZNC} (TeV);", kTH1F, {{nBinsZN, -0.5, maxZN}}).get();
     gCurrentShiftProfileZNC = gShiftProfileZNC[mCurrentRunNumber];
   }
 
-// Optimized method to load ALL calibrations for the new run at once
+  // Optimized method to load ALL calibrations for the new run at once
   void loadCalibrations(int run)
   {
     clearCache();
 
     // 1. Vertex Calibration
     if (ifBeamSpotCorrection) {
-       std::string folder = Form("%s/step0", QrecenteringCCDB.value.c_str());
-       TList* lst = ccdb->getForRun<TList>(folder, run);
-       if (lst) {
-         hMeanVx = safeClone<TH1>(lst->FindObject("hMeanVx"));
-         hMeanVy = safeClone<TH1>(lst->FindObject("hMeanVy"));
-       }
+      std::string folder = Form("%s/step0", QrecenteringCCDB.value.c_str());
+      TList* lst = ccdb->getForRun<TList>(folder, run);
+      if (lst) {
+        hMeanVx = safeClone<TH1>(lst->FindObject("hMeanVx"));
+        hMeanVy = safeClone<TH1>(lst->FindObject("hMeanVy"));
+      }
     }
 
     // 2. Step Calibrations
     std::size_t targetSteps = (calibrationStep > 0) ? static_cast<std::size_t>(calibrationStep.value) : 0;
-    mCalibCache.resize(targetSteps); 
+    mCalibCache.resize(targetSteps);
 
     for (std::size_t stepIdx = 0; stepIdx < targetSteps; ++stepIdx) {
-       int step = static_cast<int>(stepIdx + 1);
-       
-       // Load 5D (Base)
-       std::string folderBase = Form("%s/step%d_base", QrecenteringCCDB.value.c_str(), step);
-       TList* lstBase = ccdb->getForRun<TList>(folderBase, run);
-       if (lstBase) {
-           mCalibCache[stepIdx].hMeanQxZNA = safeClone<THn>(lstBase->FindObject("hMeanQxZNA"));
-           mCalibCache[stepIdx].hMeanQyZNA = safeClone<THn>(lstBase->FindObject("hMeanQyZNA"));
-           mCalibCache[stepIdx].hMeanQxZNC = safeClone<THn>(lstBase->FindObject("hMeanQxZNC"));
-           mCalibCache[stepIdx].hMeanQyZNC = safeClone<THn>(lstBase->FindObject("hMeanQyZNC"));
-       }
+      int step = static_cast<int>(stepIdx + 1);
 
-       // Load 1D (Refine)
-       if ((step != calibrationStep) || ifFineCalibration) {
-           std::string folderRefine = Form("%s/step%d_refine", QrecenteringCCDB.value.c_str(), step);
-           TList* lstRefine = ccdb->getForRun<TList>(folderRefine, run);
-           if (lstRefine) {
-               mCalibCache[stepIdx].hMeanQxCentZNA = safeClone<TH1>(lstRefine->FindObject("hMeanQxCentZNA"));
-               mCalibCache[stepIdx].hMeanQyCentZNA = safeClone<TH1>(lstRefine->FindObject("hMeanQyCentZNA"));
-               mCalibCache[stepIdx].hMeanQxCentZNC = safeClone<TH1>(lstRefine->FindObject("hMeanQxCentZNC"));
-               mCalibCache[stepIdx].hMeanQyCentZNC = safeClone<TH1>(lstRefine->FindObject("hMeanQyCentZNC"));
+      // Load 5D (Base)
+      std::string folderBase = Form("%s/step%d_base", QrecenteringCCDB.value.c_str(), step);
+      TList* lstBase = ccdb->getForRun<TList>(folderBase, run);
+      if (lstBase) {
+        mCalibCache[stepIdx].hMeanQxZNA = safeClone<THn>(lstBase->FindObject("hMeanQxZNA"));
+        mCalibCache[stepIdx].hMeanQyZNA = safeClone<THn>(lstBase->FindObject("hMeanQyZNA"));
+        mCalibCache[stepIdx].hMeanQxZNC = safeClone<THn>(lstBase->FindObject("hMeanQxZNC"));
+        mCalibCache[stepIdx].hMeanQyZNC = safeClone<THn>(lstBase->FindObject("hMeanQyZNC"));
+      }
 
-               mCalibCache[stepIdx].hMeanQxVzZNA = safeClone<TH1>(lstRefine->FindObject("hMeanQxVzZNA"));
-               mCalibCache[stepIdx].hMeanQyVzZNA = safeClone<TH1>(lstRefine->FindObject("hMeanQyVzZNA"));
-               mCalibCache[stepIdx].hMeanQxVzZNC = safeClone<TH1>(lstRefine->FindObject("hMeanQxVzZNC"));
-               mCalibCache[stepIdx].hMeanQyVzZNC = safeClone<TH1>(lstRefine->FindObject("hMeanQyVzZNC"));
+      // Load 1D (Refine)
+      if ((step != calibrationStep) || ifFineCalibration) {
+        std::string folderRefine = Form("%s/step%d_refine", QrecenteringCCDB.value.c_str(), step);
+        TList* lstRefine = ccdb->getForRun<TList>(folderRefine, run);
+        if (lstRefine) {
+          mCalibCache[stepIdx].hMeanQxCentZNA = safeClone<TH1>(lstRefine->FindObject("hMeanQxCentZNA"));
+          mCalibCache[stepIdx].hMeanQyCentZNA = safeClone<TH1>(lstRefine->FindObject("hMeanQyCentZNA"));
+          mCalibCache[stepIdx].hMeanQxCentZNC = safeClone<TH1>(lstRefine->FindObject("hMeanQxCentZNC"));
+          mCalibCache[stepIdx].hMeanQyCentZNC = safeClone<TH1>(lstRefine->FindObject("hMeanQyCentZNC"));
 
-               mCalibCache[stepIdx].hMeanQxVxZNA = safeClone<TH1>(lstRefine->FindObject("hMeanQxVxZNA"));
-               mCalibCache[stepIdx].hMeanQyVxZNA = safeClone<TH1>(lstRefine->FindObject("hMeanQyVxZNA"));
-               mCalibCache[stepIdx].hMeanQxVxZNC = safeClone<TH1>(lstRefine->FindObject("hMeanQxVxZNC"));
-               mCalibCache[stepIdx].hMeanQyVxZNC = safeClone<TH1>(lstRefine->FindObject("hMeanQyVxZNC"));
+          mCalibCache[stepIdx].hMeanQxVzZNA = safeClone<TH1>(lstRefine->FindObject("hMeanQxVzZNA"));
+          mCalibCache[stepIdx].hMeanQyVzZNA = safeClone<TH1>(lstRefine->FindObject("hMeanQyVzZNA"));
+          mCalibCache[stepIdx].hMeanQxVzZNC = safeClone<TH1>(lstRefine->FindObject("hMeanQxVzZNC"));
+          mCalibCache[stepIdx].hMeanQyVzZNC = safeClone<TH1>(lstRefine->FindObject("hMeanQyVzZNC"));
 
-               mCalibCache[stepIdx].hMeanQxVyZNA = safeClone<TH1>(lstRefine->FindObject("hMeanQxVyZNA"));
-               mCalibCache[stepIdx].hMeanQyVyZNA = safeClone<TH1>(lstRefine->FindObject("hMeanQyVyZNA"));
-               mCalibCache[stepIdx].hMeanQxVyZNC = safeClone<TH1>(lstRefine->FindObject("hMeanQxVyZNC"));
-               mCalibCache[stepIdx].hMeanQyVyZNC = safeClone<TH1>(lstRefine->FindObject("hMeanQyVyZNC"));
-           }
-       }
+          mCalibCache[stepIdx].hMeanQxVxZNA = safeClone<TH1>(lstRefine->FindObject("hMeanQxVxZNA"));
+          mCalibCache[stepIdx].hMeanQyVxZNA = safeClone<TH1>(lstRefine->FindObject("hMeanQyVxZNA"));
+          mCalibCache[stepIdx].hMeanQxVxZNC = safeClone<TH1>(lstRefine->FindObject("hMeanQxVxZNC"));
+          mCalibCache[stepIdx].hMeanQyVxZNC = safeClone<TH1>(lstRefine->FindObject("hMeanQyVxZNC"));
+
+          mCalibCache[stepIdx].hMeanQxVyZNA = safeClone<TH1>(lstRefine->FindObject("hMeanQxVyZNA"));
+          mCalibCache[stepIdx].hMeanQyVyZNA = safeClone<TH1>(lstRefine->FindObject("hMeanQyVyZNA"));
+          mCalibCache[stepIdx].hMeanQxVyZNC = safeClone<TH1>(lstRefine->FindObject("hMeanQxVyZNC"));
+          mCalibCache[stepIdx].hMeanQyVyZNC = safeClone<TH1>(lstRefine->FindObject("hMeanQyVyZNC"));
+        }
+      }
     } // end of step loop
 
-if (ifShiftCorrection) {
-       std::string folder = Form("%s/psiShift", QrecenteringCCDB.value.c_str());
-       
-       LOGF(info, "ZDC Analysis: Loading Shift Correction from %s for run %d", folder.c_str(), run);
+    if (ifShiftCorrection) {
+      std::string folder = Form("%s/psiShift", QrecenteringCCDB.value.c_str());
 
-       // Attempt to fetch TList from CCDB
-       auto* lst = ccdb->getForRun<TList>(folder, run);
-       
-       if (lst) {
-           // Important: Object names must match exactly what was saved
-           hShiftZNA = safeClone<TProfile3D>(lst->FindObject("hShiftZNA"));
-           hShiftZNC = safeClone<TProfile3D>(lst->FindObject("hShiftZNC"));
-           
-           if (hShiftZNA) {
-               hShiftZNA->SetDirectory(nullptr); // Detach from file
-               LOGF(info, "  >> ShiftProfileZNA found! Entries: %.0f, Mean: %f", 
-                    hShiftZNA->GetEntries(), hShiftZNA->GetMean());
-           } else {
-               LOGF(error, "  >> ShiftProfileZNA NOT found in TList! Content follows:");
-               lst->Print(); 
-           }
+      LOGF(info, "ZDC Analysis: Loading Shift Correction from %s for run %d", folder.c_str(), run);
 
-           if (hShiftZNC) {
-               hShiftZNC->SetDirectory(nullptr);
-               LOGF(info, "  >> ShiftProfileZNC found! Entries: %.0f", hShiftZNC->GetEntries());
-           } else {
-               LOGF(error, "  >> ShiftProfileZNC NOT found in TList!");
-           }
+      // Attempt to fetch TList from CCDB
+      auto* lst = ccdb->getForRun<TList>(folder, run);
 
-       } else {
-           LOGF(error, "  >> CCDB TList is NULL for path: %s. Check object type (TList vs TFile).", folder.c_str());
-       }
+      if (lst) {
+        // Important: Object names must match exactly what was saved
+        hShiftZNA = safeClone<TProfile3D>(lst->FindObject("hShiftZNA"));
+        hShiftZNC = safeClone<TProfile3D>(lst->FindObject("hShiftZNC"));
+
+        if (hShiftZNA) {
+          hShiftZNA->SetDirectory(nullptr); // Detach from file
+          LOGF(info, "  >> ShiftProfileZNA found! Entries: %.0f, Mean: %f",
+               hShiftZNA->GetEntries(), hShiftZNA->GetMean());
+        } else {
+          LOGF(error, "  >> ShiftProfileZNA NOT found in TList! Content follows:");
+          lst->Print();
+        }
+
+        if (hShiftZNC) {
+          hShiftZNC->SetDirectory(nullptr);
+          LOGF(info, "  >> ShiftProfileZNC found! Entries: %.0f", hShiftZNC->GetEntries());
+        } else {
+          LOGF(error, "  >> ShiftProfileZNC NOT found in TList!");
+        }
+
+      } else {
+        LOGF(error, "  >> CCDB TList is NULL for path: %s. Check object type (TList vs TFile).", folder.c_str());
+      }
     }
-  }  // end of loadCalibrations()
+  } // end of loadCalibrations()
 
-  ~ZdcExtraTableReader() {
-      clearCache();
+  ~ZdcExtraTableReader()
+  {
+    clearCache();
   }
 
   /// Initializes histograms and other resources before event processing.
@@ -692,7 +712,6 @@ if (ifShiftCorrection) {
     }
 
     histos.fill(HIST("eventCounter"), 0.5);
-
 
     gCurrentEventCounter->Fill(evSel_allEvents);
 
@@ -785,8 +804,6 @@ if (ifShiftCorrection) {
         if (cacheIdx >= static_cast<int>(mCalibCache.size()))
           continue;
 
-
-
         const auto& calib = mCalibCache[cacheIdx];
 
         // Apply 5D Base calibration
@@ -834,68 +851,64 @@ if (ifShiftCorrection) {
         gCurrentQyZNA->Fill(valuesQyZNA);
       }
 
-
-
       //  Calculate raw/recentered angle
       double psiZNA = TMath::ATan2(qyZNArec, qxZNArec);
 
       // Apply Correction (Read Mode)
       // Checks if correction is enabled AND if the map from CCDB was loaded successfully
       if (ifShiftCorrection && hShiftZNA) {
-          double deltaPsi = 0.0;
-          
-          // Loop over harmonics (usually 1 to 10)
-          for (int ishift = 1; ishift <= nShift; ishift++) {
-              // Retrieve coefficients from TProfile3D
-              // Axis mapping:
-              // X: Centrality
-              // Y: Type (0.5 for Sin, 1.5 for Cos)
-              // Z: Harmonic index (ishift - 0.5 maps to bin 1, 2, etc.)
-              
-              int binSin = hShiftZNA->FindBin(cent, 0.5, (double)ishift - 0.5);
-              int binCos = hShiftZNA->FindBin(cent, 1.5, (double)ishift - 0.5);
+        double deltaPsi = 0.0;
 
-              double coeffSin = hShiftZNA->GetBinContent(binSin);
-              double coeffCos = hShiftZNA->GetBinContent(binCos);
-              
-              // Fourier flattening formula:
-              // DeltaPsi = sum( (2/k) * ( <cos>*sin(k*psi) - <sin>*cos(k*psi) ) )
-              // Note: signs depend on definition, this matches the standard correction logic
-              deltaPsi += (2.0 / ishift) * (-coeffSin * TMath::Cos(ishift * psiZNA) + coeffCos * TMath::Sin(ishift * psiZNA));
-          }
-          
+        // Loop over harmonics (usually 1 to 10)
+        for (int ishift = 1; ishift <= nShift; ishift++) {
+          // Retrieve coefficients from TProfile3D
+          // Axis mapping:
+          // X: Centrality
+          // Y: Type (0.5 for Sin, 1.5 for Cos)
+          // Z: Harmonic index (ishift - 0.5 maps to bin 1, 2, etc.)
 
+          int binSin = hShiftZNA->FindBin(cent, 0.5, (double)ishift - 0.5);
+          int binCos = hShiftZNA->FindBin(cent, 1.5, (double)ishift - 0.5);
 
-          // DEBUG: Print only if shift is actually happening for first few events
-          static int debugPrintCount = 0;
-          if (debugPrintCount < 10 && std::abs(deltaPsi) > 1e-6) {
-              LOGF(info, "ZNA Shift: Cent %.1f, Raw %.3f (Delta %.4f)", cent, psiZNA, deltaPsi);
-              debugPrintCount++;
-          }
+          double coeffSin = hShiftZNA->GetBinContent(binSin);
+          double coeffCos = hShiftZNA->GetBinContent(binCos);
 
-          // Apply the calculated shift
-          psiZNA += deltaPsi;
-          
-          // Wrap angle to [-pi, pi] range
-          if (psiZNA > TMath::Pi()) psiZNA -= 2 * TMath::Pi();
-          if (psiZNA < -TMath::Pi()) psiZNA += 2 * TMath::Pi();
+          // Fourier flattening formula:
+          // DeltaPsi = sum( (2/k) * ( <cos>*sin(k*psi) - <sin>*cos(k*psi) ) )
+          // Note: signs depend on definition, this matches the standard correction logic
+          deltaPsi += (2.0 / ishift) * (-coeffSin * TMath::Cos(ishift * psiZNA) + coeffCos * TMath::Sin(ishift * psiZNA));
+        }
 
+        // DEBUG: Print only if shift is actually happening for first few events
+        static int debugPrintCount = 0;
+        if (debugPrintCount < 10 && std::abs(deltaPsi) > 1e-6) {
+          LOGF(info, "ZNA Shift: Cent %.1f, Raw %.3f (Delta %.4f)", cent, psiZNA, deltaPsi);
+          debugPrintCount++;
+        }
+
+        // Apply the calculated shift
+        psiZNA += deltaPsi;
+
+        // Wrap angle to [-pi, pi] range
+        if (psiZNA > TMath::Pi())
+          psiZNA -= 2 * TMath::Pi();
+        if (psiZNA < -TMath::Pi())
+          psiZNA += 2 * TMath::Pi();
       }
 
       // Fill Shift Profiles (Write Mode)
       // Used to generate calibration for the next step or to verify correction (QA)
       if (fillShiftHistos && gCurrentShiftProfileZNA) {
-           for (int ishift = 1; ishift <= nShift; ishift++) {
-               // Fill Sin component (Y = 0.5)
-               gCurrentShiftProfileZNA->Fill(cent, 0.5, (double)ishift - 0.5, TMath::Sin(ishift * psiZNA));
-               // Fill Cos component (Y = 1.5)
-               gCurrentShiftProfileZNA->Fill(cent, 1.5, (double)ishift - 0.5, TMath::Cos(ishift * psiZNA));
-           }
+        for (int ishift = 1; ishift <= nShift; ishift++) {
+          // Fill Sin component (Y = 0.5)
+          gCurrentShiftProfileZNA->Fill(cent, 0.5, (double)ishift - 0.5, TMath::Sin(ishift * psiZNA));
+          // Fill Cos component (Y = 1.5)
+          gCurrentShiftProfileZNA->Fill(cent, 1.5, (double)ishift - 0.5, TMath::Cos(ishift * psiZNA));
+        }
       }
 
       // Fill final analysis histogram with the best available Psi (Raw or Corrected)
       gCurrentPsiZNA->Fill(psiZNA);
-
     }
 
     // -------- ZNC --------
@@ -906,7 +919,7 @@ if (ifShiftCorrection) {
       qxZNCrec = qx;
       qyZNCrec = qy;
 
-     //   LOGF(info, "Qx init = %f", qxZNCrec);
+      //   LOGF(info, "Qx init = %f", qxZNCrec);
 
       // Iterate through steps using cached vector
       for (int step = 1; step <= calibrationStep; step++) {
@@ -923,10 +936,9 @@ if (ifShiftCorrection) {
         if (calib.hMeanQxZNC && calib.hMeanQyZNC) {
           qxZNCrec -= getMeanQFromMap(calib.hMeanQxZNC, cent, vx, vy, vz);
           qyZNCrec -= getMeanQFromMap(calib.hMeanQyZNC, cent, vx, vy, vz);
-           
-        //  LOGF(info, "Go to base calibration step = %d", step);
-       //  LOGF(info, "Qx after base calibration step %d = %f", step, qxZNCrec);
 
+          //  LOGF(info, "Go to base calibration step = %d", step);
+          //  LOGF(info, "Qx after base calibration step %d = %f", step, qxZNCrec);
         }
 
         if ((step != calibrationStep) || ifFineCalibration) {
@@ -944,8 +956,7 @@ if (ifShiftCorrection) {
           qxZNCrec -= getMeanQ1D(calib.hMeanQxVyZNC, vy);
           qyZNCrec -= getMeanQ1D(calib.hMeanQyVyZNC, vy);
           // LOGF(info, "Go to refine calibration step = %d", step);
-        //   LOGF(info, "Qx after fine calibration step %d = %f", step, qxZNCrec);
-
+          //   LOGF(info, "Qx after fine calibration step %d = %f", step, qxZNCrec);
         }
       }
 
@@ -974,52 +985,53 @@ if (ifShiftCorrection) {
         gCurrentQyZNC->Fill(valuesQyZNC);
       }
 
-      
       //  Calculate raw/recentered angle
       double psiZNC = TMath::ATan2(qyZNCrec, qxZNCrec);
 
       // Apply Correction (Read Mode)
       // Checks if correction is enabled AND if the map from CCDB was loaded successfully
       if (ifShiftCorrection && hShiftZNC) {
-          double deltaPsi = 0.0;
-          
-          // Loop over harmonics (usually 1 to 10)
-          for (int ishift = 1; ishift <= nShift; ishift++) {
-              // Retrieve coefficients from TProfile3D
-              // Axis mapping:
-              // X: Centrality
-              // Y: Type (0.5 for Sin, 1.5 for Cos)
-              // Z: Harmonic index (ishift - 0.5 maps to bin 1, 2, etc.)
-              
-              int binSin = hShiftZNC->FindBin(cent, 0.5, (double)ishift - 0.5);
-              int binCos = hShiftZNC->FindBin(cent, 1.5, (double)ishift - 0.5);
+        double deltaPsi = 0.0;
 
-              double coeffSin = hShiftZNC->GetBinContent(binSin);
-              double coeffCos = hShiftZNC->GetBinContent(binCos);
-              
-              // Fourier flattening formula:
-              // DeltaPsi = sum( (2/k) * ( <cos>*sin(k*psi) - <sin>*cos(k*psi) ) )
-              // Note: signs depend on definition, this matches the standard correction logic
-              deltaPsi += (2.0 / ishift) * (-coeffSin * TMath::Cos(ishift * psiZNC) + coeffCos * TMath::Sin(ishift * psiZNC));
-          }
-          
-          // Apply the calculated shift
-          psiZNC += deltaPsi;
-          
-          // Wrap angle to [-pi, pi] range
-          if (psiZNC > TMath::Pi()) psiZNC -= 2 * TMath::Pi();
-          if (psiZNC < -TMath::Pi()) psiZNC += 2 * TMath::Pi();
+        // Loop over harmonics (usually 1 to 10)
+        for (int ishift = 1; ishift <= nShift; ishift++) {
+          // Retrieve coefficients from TProfile3D
+          // Axis mapping:
+          // X: Centrality
+          // Y: Type (0.5 for Sin, 1.5 for Cos)
+          // Z: Harmonic index (ishift - 0.5 maps to bin 1, 2, etc.)
+
+          int binSin = hShiftZNC->FindBin(cent, 0.5, (double)ishift - 0.5);
+          int binCos = hShiftZNC->FindBin(cent, 1.5, (double)ishift - 0.5);
+
+          double coeffSin = hShiftZNC->GetBinContent(binSin);
+          double coeffCos = hShiftZNC->GetBinContent(binCos);
+
+          // Fourier flattening formula:
+          // DeltaPsi = sum( (2/k) * ( <cos>*sin(k*psi) - <sin>*cos(k*psi) ) )
+          // Note: signs depend on definition, this matches the standard correction logic
+          deltaPsi += (2.0 / ishift) * (-coeffSin * TMath::Cos(ishift * psiZNC) + coeffCos * TMath::Sin(ishift * psiZNC));
+        }
+
+        // Apply the calculated shift
+        psiZNC += deltaPsi;
+
+        // Wrap angle to [-pi, pi] range
+        if (psiZNC > TMath::Pi())
+          psiZNC -= 2 * TMath::Pi();
+        if (psiZNC < -TMath::Pi())
+          psiZNC += 2 * TMath::Pi();
       }
 
       // Fill Shift Profiles (Write Mode)
       // Used to generate calibration for the next step or to verify correction (QA)
       if (fillShiftHistos && gCurrentShiftProfileZNC) {
-           for (int ishift = 1; ishift <= nShift; ishift++) {
-               // Fill Sin component (Y = 0.5)
-               gCurrentShiftProfileZNC->Fill(cent, 0.5, (double)ishift - 0.5, TMath::Sin(ishift * psiZNC));
-               // Fill Cos component (Y = 1.5)
-               gCurrentShiftProfileZNC->Fill(cent, 1.5, (double)ishift - 0.5, TMath::Cos(ishift * psiZNC));
-           }
+        for (int ishift = 1; ishift <= nShift; ishift++) {
+          // Fill Sin component (Y = 0.5)
+          gCurrentShiftProfileZNC->Fill(cent, 0.5, (double)ishift - 0.5, TMath::Sin(ishift * psiZNC));
+          // Fill Cos component (Y = 1.5)
+          gCurrentShiftProfileZNC->Fill(cent, 1.5, (double)ishift - 0.5, TMath::Cos(ishift * psiZNC));
+        }
       }
 
       // Fill final analysis histogram with the best available Psi (Raw or Corrected)
