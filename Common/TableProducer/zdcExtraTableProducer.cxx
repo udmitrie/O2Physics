@@ -372,5 +372,5 @@ struct ZdcExtraTableProducer {
 WorkflowSpec defineDataProcessing(ConfigContext const& cfgc)
 {
   return WorkflowSpec{
-      adaptAnalysisTask<ZdcExtraTableProducer>(cfgc)};
+    adaptAnalysisTask<ZdcExtraTableProducer>(cfgc)};
 }
