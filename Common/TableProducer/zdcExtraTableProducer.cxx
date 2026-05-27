@@ -196,15 +196,31 @@ struct ZdcExtraTableProducer {
 
         uint8_t evSelection = eventSelected(collision);
 
-        if (cfgEvSelSel8 && !TESTBIT(evSelection, kSel8)) continue;
-        if (!TESTBIT(evSelection, kZvtx)) continue; 
-        if (cfgEvSelsDoOccupancySel && !TESTBIT(evSelection, kOccupancy)) continue;
-        if (cfgEvSelsNoSameBunchPileupCut && !TESTBIT(evSelection, kNoSameBunchPileup)) continue;
-        if (cfgEvSelsIsGoodZvtxFT0vsPV && !TESTBIT(evSelection, kIsGoodZvtxFT0vsPV)) continue;
-        if (cfgEvSelsNoCollInTimeRangeStandard && !TESTBIT(evSelection, kNoCollInTimeRangeStandard)) continue;
-        if (cfgEvSelsIsVertexITSTPC && !TESTBIT(evSelection, kIsVertexITSTPC)) continue;
-        if (cfgEvSelsIsGoodITSLayersAll && !TESTBIT(evSelection, kIsGoodITSLayersAll)) continue;
-      
+        if (cfgEvSelSel8 && !TESTBIT(evSelection, kSel8)) {
+          continue;
+        }
+        if (!TESTBIT(evSelection, kZvtx)) {
+          continue;
+        }
+        if (cfgEvSelsDoOccupancySel && !TESTBIT(evSelection, kOccupancy)) {
+          continue;
+        }
+        if (cfgEvSelsNoSameBunchPileupCut && !TESTBIT(evSelection, kNoSameBunchPileup)) {
+          continue;
+        }
+        if (cfgEvSelsIsGoodZvtxFT0vsPV && !TESTBIT(evSelection, kIsGoodZvtxFT0vsPV)) {
+          continue;
+        }
+        if (cfgEvSelsNoCollInTimeRangeStandard && !TESTBIT(evSelection, kNoCollInTimeRangeStandard)) {
+          continue;
+        }
+        if (cfgEvSelsIsVertexITSTPC && !TESTBIT(evSelection, kIsVertexITSTPC)) {
+          continue;
+        }
+        if (cfgEvSelsIsGoodITSLayersAll && !TESTBIT(evSelection, kIsGoodITSLayersAll)) {
+          continue;
+        }
+
         float centrality = collision.centFT0C();
 
         // To assure that ZN have a genuine signal (tagged by the relative TDC)
@@ -356,5 +372,5 @@ struct ZdcExtraTableProducer {
 WorkflowSpec defineDataProcessing(ConfigContext const& cfgc)
 {
   return WorkflowSpec{
-    adaptAnalysisTask<ZdcExtraTableProducer>(cfgc)};
+      adaptAnalysisTask<ZdcExtraTableProducer>(cfgc)};
 }
